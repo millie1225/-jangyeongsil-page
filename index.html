@@ -333,6 +333,9 @@ function showScene(i) {
   const sc = SCENES[i];
   const back = 1 - front, img = layers[back], old = layers[front];
   const token = ++sceneToken;
+  // 화면이 어두워진 상태에서 넘어올 때는 이전 그림이 비치지 않게 바로 바꿈
+  const instant = $('blackout').classList.contains('on');
+  if (instant) { old.style.transition = img.style.transition = 'none'; old.classList.remove('on'); }
   if (kb[back]) { kb[back].cancel(); kb[back] = null; }
   img.classList.remove('on');
   img.src = `images/${sc.img}.jpg`;
@@ -347,6 +350,7 @@ function showScene(i) {
     }
     img.classList.add('on');
     old.classList.remove('on');
+    if (instant) requestAnimationFrame(() => requestAnimationFrame(() => { old.style.transition = img.style.transition = ''; }));
   };
   (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(reveal);
 
