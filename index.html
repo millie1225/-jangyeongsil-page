@@ -164,6 +164,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
   </ul>
   <h3>사진 출처 (위키미디어 공용)</h3>
   <ul>
+    <li>혼천의: <a href="https://commons.wikimedia.org/wiki/File:Honcheonui_(a_traditional_armillary_sphere_(replica))_(The_sphere_is_a_leading_astronomical_instrument_from_the_Joseon_Dynasty_used_to_observe_the_movements_of_the_sun,_moon_and_stars)_(55220955426).jpg" target="_blank" rel="noopener">이정우 / 문화체육관광부</a>, CC BY-SA 4.0</li>
     <li>자격루: <a href="https://commons.wikimedia.org/wiki/File:BoRuGak_Jagyeongnu.JPG" target="_blank" rel="noopener">Gapo</a>, CC BY-SA 3.0</li>
     <li>앙부일구: <a href="https://commons.wikimedia.org/wiki/File:Seoul-Gyeongbokgung-Sundial-02.jpg" target="_blank" rel="noopener">Bernat</a>, CC BY-SA 2.0</li>
     <li>측우기: <a href="https://commons.wikimedia.org/wiki/File:%EA%B3%B5%EC%A3%BC_%EC%B6%A9%EC%B2%AD%EA%B0%90%EC%98%81_%EC%B8%A1%EC%9A%B0%EA%B8%B0.jpg" target="_blank" rel="noopener">문화재청(현 국가유산청)</a>, 공공누리 제1유형</li>
@@ -173,6 +174,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
 <script>
 /* ---------- 장면 데이터 (대본.md와 같음) ---------- */
 const PHOTOS = {
+  honcheonui: { src: 'images/honcheonui.jpg', title: '혼천의 (복원품)', desc: '해와 달, 별의 움직임을 재던 천문 기구를 다시 만든 거예요.' },
   jagyeongnu: { src: 'images/jagyeongnu.jpg', title: '자격루 (국보)', desc: '지금 남아 있는 것은 1536년(중종 때) 다시 만든 자격루의 일부예요.' },
   angbuilgu:  { src: 'images/angbuilgu.jpg',  title: '앙부일구', desc: '솥 안에 비친 바늘 그림자로 시각과 절기를 읽었어요.' },
   chugugi:    { src: 'images/chugugi.jpg',    title: '공주 충청감영 측우기 (국보)', desc: '1837년에 만든 것으로, 지금까지 남아 있는 유일한 조선 측우기예요.' },
@@ -205,8 +207,8 @@ const SCENES = [
     '세종은 그런 장영실을 아끼고 믿어 주었지요',
     '임금의 믿음 속에서, 놀라운 발명품들이 하나둘 태어나기 시작합니다',
   ]},
-  { img: 'honcheon', m: 2, fx: 'stars', year: [1433, '세종 15년'], kb: ['scale(1.15) translate(-2%,0)', 'scale(1.03) translate(2%,0)'], lines: [
-    '먼저 하늘의 해와 달, 별의 움직임을 재는 혼천의',
+  { img: 'honcheon', m: 2, fx: 'stars', year: [1433, '세종 15년'], photo: 'honcheonui', kb: ['scale(1.15) translate(-2%,0)', 'scale(1.03) translate(2%,0)'], lines: [
+    '먼저 하늘을 관측하는 천문 기구, 혼천의',
     '장영실도 이 천문 기구를 만드는 데 힘을 보탰답니다',
   ]},
   { img: 's09', m: 2, fx: 'ring', year: [1434, '세종 16년'], photo: 'jagyeongnu', kb: ['scale(1.04) translate(-2%,0)', 'scale(1.16) translate(3%,1%)'], lines: [
