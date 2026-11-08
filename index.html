@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>진짜 장영실을 만나요</title>
+<meta name="description" content="노비 출신 과학자 장영실의 업적을 따라가는 초등학생용 애니메이션 페이지">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0d0b; --panel:#1b1714; --line:#3a312a; --ink:#f4ece1; --sub:#b9aa98;
+  --gold:#e3b866; --red:#c8553d; --ok:#3f7d5c;
+  --serif:"Noto Serif KR",serif; --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body{min-height:100vh;padding:20px 16px 32px}
+header{max-width:1080px;margin:0 auto 12px}
+header h1{font-family:var(--serif);font-weight:900;font-size:clamp(20px,3vw,28px);margin:0;letter-spacing:-.5px}
+header p{margin:4px 0 0;color:var(--sub);font-size:14px}
+
+.player{max-width:1080px;margin:0 auto;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.screen{position:relative;aspect-ratio:16/9;overflow:hidden;background:#000;user-select:none;container-type:size}
+.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease;will-change:transform,opacity}
+.layer.on{opacity:1}
+.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45) 100%)}
+
+/* 연도 배지 */
+.badge{position:absolute;top:12px;right:12px;font-family:var(--serif);font-weight:900;color:var(--gold);background:rgba(0,0,0,.5);border:1px solid rgba(227,184,102,.5);padding:4px 12px;border-radius:10px;font-size:clamp(13px,1.8vw,18px);opacity:0;transition:opacity .6s}
+.badge.on{opacity:1}
+
+/* 큰 카드들 공통 */
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;opacity:0;pointer-events:none;transition:opacity .7s ease}
+.overlay.on{opacity:1}
+.year{background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.25) 70%)}
+.year b{font-family:var(--serif);font-weight:900;font-size:clamp(56px,13vw,150px);line-height:1;color:var(--gold);text-shadow:0 4px 30px rgba(0,0,0,.7);letter-spacing:-2px}
+.year span{font-size:clamp(15px,2.2vw,24px);margin-top:6px;text-shadow:0 2px 10px #000}
+.year.on b{animation:yearIn 2.4s ease both}
+@keyframes yearIn{0%{transform:scale(.85);letter-spacing:12px;opacity:0}30%{opacity:1}100%{transform:scale(1);letter-spacing:-2px}}
+
+/* 실사 사진 */
+.photo{background:rgba(10,8,6,.55)}
+.photo figure{margin:0;width:fit-content;background:#f7f1e6;padding:10px 10px 8px;border-radius:6px;box-shadow:0 18px 50px rgba(0,0,0,.6);max-height:88%;max-width:70%;display:flex;flex-direction:column;transform:scale(.9) rotate(-1.5deg);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.photo.on figure{transform:scale(1) rotate(-1.5deg)}
+.photo img{display:block;max-height:calc(88cqh - 60px);max-width:100%;object-fit:contain;border-radius:3px;min-height:0}
+.photo figcaption{overflow-wrap:anywhere;word-break:keep-all;color:#2b241e;font-size:clamp(11px,1.4vw,14px);padding-top:6px;line-height:1.35}
+.photo figcaption b{display:block;font-size:clamp(12px,1.6vw,16px)}
+.photo .real{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:1px}
+
+/* 효과 */
+.fx{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s}
+.fx.on{opacity:1}
+.star{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff3c4;box-shadow:0 0 8px 3px rgba(255,220,140,.75);animation:tw 2.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
+.rain{background-image:repeating-linear-gradient(105deg,transparent 0 18px,rgba(220,235,255,.35) 18px 19px,transparent 19px 40px);background-size:200px 200px;animation:rain .45s linear infinite}
+@keyframes rain{to{background-position:-40px 200px}}
+.ring{position:absolute;left:12%;top:36%;width:60px;height:60px;border:3px solid rgba(227,184,102,.8);border-radius:50%;animation:ring 3s ease-out infinite}
+@keyframes ring{0%,40%{opacity:0;transform:scale(.3)}50%{opacity:1}100%{opacity:0;transform:scale(2.4)}}
+.paused .star,.paused .rain,.paused .ring{animation-play-state:paused}
+
+/* 시작 / 끝 화면 */
+.gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.7));z-index:5;transition:opacity .6s;padding:0 16px}
+.gate.hide{opacity:0;pointer-events:none}
+.gate h2{font-family:var(--serif);font-weight:900;font-size:clamp(26px,5vw,56px);margin:0;text-shadow:0 4px 20px #000}
+.gate p{margin:8px 0 18px;color:#e8dccb;font-size:clamp(13px,1.8vw,18px);text-shadow:0 2px 8px #000;word-break:keep-all}
+.big{font:inherit;font-weight:700;font-size:clamp(15px,2vw,19px);color:#2b1d10;background:var(--gold);border:0;border-radius:999px;padding:12px 28px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.big:hover{filter:brightness(1.08)}
+.big:focus-visible,.ctl:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.end{background:rgba(0,0,0,.78)}
+
+/* 자막 */
+.caption{min-height:clamp(84px,9vw,104px);display:flex;align-items:center;justify-content:center;padding:12px 20px;border-top:1px solid var(--line);background:#14110f}
+.caption p{margin:0;max-width:880px;text-align:center;font-size:clamp(16px,2.2vw,23px);line-height:1.6;font-weight:500;opacity:0;transform:translateY(6px);transition:opacity .6s,transform .6s;word-break:keep-all}
+.caption p.on{opacity:1;transform:none}
+
+/* 조작 */
+.controls{display:flex;align-items:center;gap:10px;padding:10px 14px 12px;background:#14110f}
+.ctl{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--line);background:#221d19;color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.ctl:hover{background:#2d2621}
+.ctl svg{width:18px;height:18px;fill:currentColor}
+.ctl.main{width:46px;height:46px;background:var(--gold);color:#2b1d10;border:0}
+.bar{flex:1;min-width:0;height:8px;background:#2d2621;border-radius:999px;overflow:hidden;cursor:pointer}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:inherit}
+.time{font-variant-numeric:tabular-nums;font-size:13px;color:var(--sub);min-width:84px;text-align:right}
+
+footer{max-width:1080px;margin:18px auto 0;color:var(--sub);font-size:12.5px;line-height:1.7}
+footer h3{font-size:13px;color:var(--ink);margin:0 0 4px}
+footer a{color:var(--gold)}
+footer ul{margin:0 0 10px;padding-left:18px}
+
+@media (max-width:600px){
+  body{padding:12px 0 24px}
+  header,footer{padding:0 16px}
+  .player{border-radius:0;border-left:0;border-right:0}
+  .photo figure{max-width:82%}
+  .photo .real{font-size:10px;padding:3px 8px;top:6px}
+  .controls{gap:6px;padding:10px 10px}
+  .ctl{width:36px;height:36px}
+  .ctl.main{width:42px;height:42px}
+  .time{min-width:auto;font-size:11px}
+  .badge{top:8px;right:8px}
+  .ring{width:36px;height:36px}
+}
+@media (prefers-reduced-motion:reduce){
+  .star,.rain,.ring,.year.on b{animation:none}
+  .layer{transition:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>진짜 장영실을 만나요</h1>
+  <p>노비 출신 과학자 장영실의 이야기 · <span id="totalTxt"></span></p>
+</header>
+
+<div class="player" id="player">
+  <div class="screen" id="screen">
+    <img class="layer" id="layerA" alt="">
+    <img class="layer" id="layerB" alt="">
+    <div class="vignette"></div>
+    <div class="fx" id="fxStars"></div>
+    <div class="fx" id="fxSparkle"></div>
+    <div class="fx rain" id="fxRain"></div>
+    <div class="fx" id="fxRing"><div class="ring"></div></div>
+    <div class="badge" id="badge"></div>
+
+    <div class="overlay year" id="year"><b id="yearNum"></b><span id="yearSub"></span></div>
+    <div class="overlay photo" id="photo">
+      <div class="real">실제 유물 사진</div>
+      <figure><img id="photoImg" alt=""><figcaption><b id="photoTitle"></b><span id="photoDesc"></span></figcaption></figure>
+    </div>
+
+    <div class="gate" id="start">
+      <h2>진짜 장영실을 만나요</h2>
+      <p>조선의 하늘과 시간을 연구한 과학자 이야기</p>
+      <button class="big" id="startBtn">▶ 시작하기</button>
+    </div>
+    <div class="gate end hide" id="end">
+      <h2 id="endTitle">끝</h2>
+      <p id="endMsg">장영실의 발명품은 지금도 박물관에서 만날 수 있어요</p>
+      <button class="big" id="againBtn">↻ 다시 보기</button>
+    </div>
+  </div>
+
+  <div class="caption" aria-live="polite"><p id="sub"></p></div>
+
+  <div class="controls">
+    <button class="ctl" id="prevBtn" aria-label="이전 장면"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button class="ctl main" id="playBtn" aria-label="재생"><svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4v16l13-8z"/></svg></button>
+    <button class="ctl" id="nextBtn" aria-label="다음 장면"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    <div class="bar" id="bar" role="progressbar" aria-label="진행"><i id="barFill"></i></div>
+    <span class="time" id="time">0:00 / 0:00</span>
+    <button class="ctl" id="muteBtn" aria-label="음악 끄기"><svg viewBox="0 0 24 24" id="muteIcon"></svg></button>
+  </div>
+</div>
+
+<footer>
+  <h3>알아 두세요</h3>
+  <ul>
+    <li>역사 내용은 『세종실록』의 기록을 기준으로 했어요.</li>
+  </ul>
+  <h3>사진 출처 (위키미디어 공용)</h3>
+  <ul>
+    <li>자격루: <a href="https://commons.wikimedia.org/wiki/File:BoRuGak_Jagyeongnu.JPG" target="_blank" rel="noopener">Gapo</a>, CC BY-SA 3.0</li>
+    <li>앙부일구: <a href="https://commons.wikimedia.org/wiki/File:Seoul-Gyeongbokgung-Sundial-02.jpg" target="_blank" rel="noopener">Bernat</a>, CC BY-SA 2.0</li>
+    <li>측우기: <a href="https://commons.wikimedia.org/wiki/File:%EA%B3%B5%EC%A3%BC_%EC%B6%A9%EC%B2%AD%EA%B0%90%EC%98%81_%EC%B8%A1%EC%9A%B0%EA%B8%B0.jpg" target="_blank" rel="noopener">문화재청(현 국가유산청)</a>, 공공누리 제1유형</li>
+  </ul>
+</footer>
+
+<script>
+/* ---------- 장면 데이터 (대본.md와 같음) ---------- */
+const PHOTOS = {
+  jagyeongnu: { src: 'images/jagyeongnu.jpg', title: '자격루 (국보)', desc: '지금 남아 있는 것은 1536년(중종 때) 다시 만든 자격루의 일부예요.' },
+  angbuilgu:  { src: 'images/angbuilgu.jpg',  title: '앙부일구', desc: '솥 안에 비친 바늘 그림자로 시각과 절기를 읽었어요.' },
+  chugugi:    { src: 'images/chugugi.jpg',    title: '공주 충청감영 측우기 (국보)', desc: '1837년에 만든 것으로, 지금까지 남아 있는 유일한 조선 측우기예요.' },
+};
+
+const MUSIC = { 1: 'music/m1-start.mp3', 2: 'music/m2-invent.mp3', 3: 'music/m3-sad.mp3', 4: 'music/m4-ending.mp3' };
+
+// 자막 끝에는 마침표를 찍지 않아요
+const SCENES = [
+  { img: 's01', m: 1, fx: 'stars', kb: ['scale(1.18) translate(0,4%)', 'scale(1.02)'], lines: [
+    '약 600년 전, 조선의 하늘과 시간을 연구한 과학자가 있었습니다',
+    '그의 이름은 장영실',
+    '지금부터 그 이야기를 따라가 봅니다',
+  ]},
+  { img: 's06', m: 1, kb: ['scale(1.04)', 'scale(1.16) translate(2%,1%)'], lines: [
+    '태어난 곳은 동래현, 지금의 부산',
+    '관청에 속한 노비였지요',
+    '신분은 낮았지만, 손재주만큼은 누구보다 뛰어났습니다',
+  ]},
+  { img: 'court', m: 1, year: [1423, '세종 5년'], kb: ['scale(1.03)', 'scale(1.15) translate(0,3%)'], lines: [
+    '그 솜씨는 마침내 궁궐에까지 소문이 났어요',
+    '그런데 세종이 벼슬을 주려 하자, 노비 출신은 안 된다며 반대하는 신하도 있었지요',
+  ]},
+  { img: 's08', m: 1, year: [1423, '세종 5년'], noCard: true, kb: ['scale(1.14) translate(0,4%)', 'scale(1.02)'], lines: [
+    '하지만 세종의 생각은 달랐습니다',
+    '신분보다 실력이 먼저였거든요',
+    '그렇게 장영실은 상의원 별좌, 나라의 관리가 됩니다',
+  ]},
+  { img: 'pat', m: 2, kb: ['scale(1.03) translate(2%,0)', 'scale(1.15) translate(-2%,1%)'], lines: [
+    '세종은 그런 장영실을 아끼고 믿어 주었지요',
+    '임금의 믿음 속에서, 놀라운 발명품들이 하나둘 태어나기 시작합니다',
+  ]},
+  { img: 'honcheon', m: 2, fx: 'stars', year: [1433, '세종 15년'], kb: ['scale(1.15) translate(-2%,0)', 'scale(1.03) translate(2%,0)'], lines: [
+    '먼저 하늘의 해와 달, 별의 움직임을 재는 혼천의',
+    '장영실도 이 천문 기구를 만드는 데 힘을 보탰답니다',
+  ]},
+  { img: 's09', m: 2, fx: 'ring', year: [1434, '세종 16년'], photo: 'jagyeongnu', kb: ['scale(1.04) translate(-2%,0)', 'scale(1.16) translate(3%,1%)'], lines: [
+    '이듬해에는 스스로 시각을 알리는 물시계, 자격루를 앞장서 만들었어요',
+    '물이 차오르면 구슬이 굴러 내려가고, 그 구슬이 종과 북을 울려 시각을 알리는 원리였지요',
+  ]},
+  { img: 's10', m: 2, year: [1434, '세종 16년'], noCard: true, photo: 'angbuilgu', kb: ['scale(1.16) translate(0,3%)', 'scale(1.03)'], lines: [
+    '같은 해, 길가에는 솥 모양의 해시계 앙부일구가 놓입니다',
+    '그림자만 보면 누구나 시간을 알 수 있었으니, 백성들에게 얼마나 반가운 선물이었을까요?',
+  ]},
+  { img: 'okru', m: 2, fx: 'sparkle', year: [1438, '세종 20년'], kb: ['scale(1.03)', 'scale(1.16) translate(0,2%)'], lines: [
+    '흠경각의 옥루도 장영실의 손에서 완성되었습니다',
+    '물의 힘으로 해가 움직이고, 작은 인형들이 시각을 알려 주는 신기한 시계',
+  ]},
+  { img: 's11', m: 2, fx: 'rain', year: [1441, '세종 23년'], photo: 'chugugi', kb: ['scale(1.03)', 'scale(1.18) translate(-3%,3%)'], lines: [
+    '비의 양을 재는 측우기도 세종 시대에 만들어졌습니다',
+    '다만 실록에는 세자, 훗날의 문종이 만들었다고 적혀 있어요',
+  ]},
+  { img: 'blame', m: 3, year: [1442, '세종 24년'], kb: ['scale(1.15) translate(-2%,2%)', 'scale(1.03)'], lines: [
+    '그런데 장영실이 감독해 만든 임금의 가마가 그만 부서지고 말았습니다',
+    '신하들은 그 책임을 엄하게 물었지요',
+    '세종이 벌을 조금 줄여 주었지만, 장영실은 결국 벼슬에서 물러나야 했답니다',
+  ]},
+  { img: 's04', m: 3, kb: ['scale(1.03) translate(3%,0)', 'scale(1.16) translate(-4%,1%)'], lines: [
+    '그 뒤 장영실은 어떻게 살았을까요?',
+    '어디에도 기록은 남아 있지 않습니다',
+  ]},
+  { img: 's02', m: 4, fx: 'stars', kb: ['scale(1.02)', 'scale(1.14) translate(0,2%)'], lines: [
+    '영화 「천문」처럼, 두 사람이 함께 별을 보던 친구였다는 이야기도 있지요',
+    '하지만 이것은 역사 기록에는 없는, 상상이 더해진 이야기랍니다',
+  ]},
+  { img: 's13', m: 4, kb: ['scale(1.02)', 'scale(1.12) translate(0,-2%)'], lines: [
+    '노비로 태어난 한 소년이 조선의 하늘과 시간을 바꾼 것입니다',
+    '600년이 지난 지금도 그 이름은 남아 있어요',
+    "새로운 기술을 개발한 연구팀에게 주는 상, '장영실상'이 바로 그것이지요",
+  ]},
+  { img: 's01', m: 4, fx: 'stars', kb: ['scale(1.02)', 'scale(1.16) translate(0,4%)'], lines: [
+    '신분이 아니라, 끝까지 궁금해하고 직접 만들어 보는 마음',
+    '어쩌면 그것이 장영실이 남긴 가장 큰 발명품인지도 모릅니다',
+    '여러분이 장영실이라면, 무엇을 만들어 보고 싶나요?',
+  ]},
+];
+
+
+/* ---------- 타임라인 만들기 ---------- */
+const lineDur = s => Math.min(6.2, Math.max(2.6, s.length / 9.5 + 0.9));
+const STEPS = [];
+const sceneStart = [];
+SCENES.forEach((sc, i) => {
+  sceneStart[i] = STEPS.length;
+  if (sc.year && !sc.noCard) STEPS.push({ t: 'year', scene: i, dur: 2.2 });
+  sc.lines.forEach(text => STEPS.push({ t: 'line', text, scene: i, dur: lineDur(text) }));
+  if (sc.photo) STEPS.push({ t: 'photo', photo: sc.photo, scene: i, dur: 4 });
+});
+const stepAt = []; let acc = 0;
+STEPS.forEach((s, i) => { stepAt[i] = acc; acc += s.dur; });
+const TOTAL = acc;
+const sceneDur = i => {
+  const a = sceneStart[i], b = i + 1 < SCENES.length ? sceneStart[i + 1] : STEPS.length;
+  return STEPS.slice(a, b).reduce((n, s) => n + s.dur, 0);
+};
+
+/* ---------- 요소 ---------- */
+const $ = id => document.getElementById(id);
+const screen = $('screen');
+const layers = [$('layerA'), $('layerB')];
+let front = 0, kbAnim = null;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function scatter(box, n, x0, x1, y0, y1) {
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.style.left = (x0 + Math.random() * (x1 - x0)) + '%';
+    s.style.top = (y0 + Math.random() * (y1 - y0)) + '%';
+    s.style.animationDelay = (Math.random() * 2.6).toFixed(2) + 's';
+    box.appendChild(s);
+  }
+}
+scatter($('fxStars'), 26, 2, 98, 2, 38);     // 밤하늘 위쪽
+scatter($('fxSparkle'), 18, 30, 70, 12, 72); // 옥루 둘레
+
+// 이미지 미리 불러오기
+[...new Set(SCENES.map(s => s.img))].forEach(n => { const im = new Image(); im.src = `images/${n}.jpg`; });
+Object.values(PHOTOS).forEach(p => { const im = new Image(); im.src = p.src; });
+
+/* ---------- 음악 (곡이 바뀔 때 부드럽게 넘어감) ---------- */
+const VOL = 0.5, FADE = 1.6; // 최대 볼륨, 넘어가는 시간(초)
+const tracks = {};
+Object.entries(MUSIC).forEach(([k, src]) => {
+  const a = new Audio(src); a.loop = true; a.preload = 'auto'; a.volume = 0;
+  tracks[k] = { a, v: 0 }; // v: 우리가 관리하는 볼륨 (iOS는 volume을 바꿀 수 없어서 따로 둠)
+});
+let curTrack = null, muted = false, musicOn = false;
+function setTrack(k) { curTrack = k; }
+function musicTick(dt) {
+  Object.entries(tracks).forEach(([k, t]) => {
+    const target = (musicOn && !muted && k == curTrack) ? VOL : 0;
+    if (t.v < target) t.v = Math.min(target, t.v + dt * VOL / FADE);
+    else if (t.v > target) t.v = Math.max(target, t.v - dt * VOL / FADE);
+    try { t.a.volume = t.v; } catch (e) {}
+    if (target > 0 && t.a.paused) t.a.play().catch(() => {});
+    if (t.v === 0 && !t.a.paused) t.a.pause();
+  });
+}
+function drawMute() {
+  $('muteIcon').innerHTML = muted
+    ? '<path d="M3 9h4l5-4v14l-5-4H3zM16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" fill="currentColor"/>'
+    : '<path d="M3 9h4l5-4v14l-5-4H3z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none"/>';
+  $('muteBtn').setAttribute('aria-label', muted ? '음악 켜기' : '음악 끄기');
+}
+
+/* ---------- 재생 상태 ---------- */
+let idx = 0, el = 0, playing = false, last = performance.now(), curScene = -1;
+
+function showScene(i) {
+  const sc = SCENES[i];
+  const back = 1 - front;
+  const img = layers[back];
+  img.src = `images/${sc.img}.jpg`;
+  if (kbAnim) kbAnim.cancel();
+  if (!reduce) {
+    kbAnim = img.animate([{ transform: sc.kb[0] }, { transform: sc.kb[1] }],
+      { duration: sceneDur(i) * 1000 + 1200, easing: 'linear', fill: 'forwards' });
+    if (!playing) kbAnim.pause();
+  }
+  img.classList.add('on');
+  layers[front].classList.remove('on');
+  front = back;
+
+  $('fxStars').classList.toggle('on', sc.fx === 'stars');
+  $('fxSparkle').classList.toggle('on', sc.fx === 'sparkle');
+  $('fxRain').classList.toggle('on', sc.fx === 'rain');
+  $('fxRing').classList.toggle('on', sc.fx === 'ring');
+  const b = $('badge');
+  if (sc.year) { b.textContent = `${sc.year[0]}년 · ${sc.year[1]}`; b.classList.add('on'); }
+  else b.classList.remove('on');
+  setTrack(sc.m);
+  curScene = i;
+}
+
+function setSub(text) {
+  const p = $('sub');
+  p.classList.remove('on');
+  setTimeout(() => { p.textContent = text || ''; if (text) p.classList.add('on'); }, text ? 180 : 0);
+}
+
+function showStep(i) {
+  const st = STEPS[i];
+  if (st.scene !== curScene) showScene(st.scene);
+  ['year', 'photo'].forEach(id => $(id).classList.remove('on'));
+  const sc = SCENES[st.scene];
+
+  if (st.t === 'line') setSub(st.text);
+  if (st.t === 'year') {
+    $('yearNum').textContent = sc.year[0]; $('yearSub').textContent = sc.year[1];
+    const y = $('year'); y.classList.remove('on'); void y.offsetWidth; y.classList.add('on'); setSub('');
+  }
+  if (st.t === 'photo') { // 자막은 앞 문장을 그대로 둠
+    const p = PHOTOS[st.photo];
+    $('photoImg').src = p.src; $('photoImg').alt = p.title + ' 실제 사진';
+    $('photoTitle').textContent = p.title; $('photoDesc').textContent = p.desc;
+    $('photo').classList.add('on');
+  }
+}
+
+function go(i) {
+  idx = Math.max(0, Math.min(STEPS.length - 1, i));
+  el = 0;
+  showStep(idx);
+  updateBar();
+}
+
+function setPlaying(on) {
+  playing = on;
+  musicOn = on || inQuiz;
+  screen.classList.toggle('paused', !on);
+  if (kbAnim) on ? kbAnim.play() : kbAnim.pause();
+  $('playIcon').innerHTML = on ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4v16l13-8z"/>';
+  $('playBtn').setAttribute('aria-label', on ? '멈춤' : '재생');
+}
+
+function finish() {
+  setPlaying(false);
+  $('end').classList.remove('hide');
+  $('againBtn').focus();
+}
+
+let inQuiz = false;
+function closeQuiz() {}
+
+function tick(now) {
+  const dt = Math.min(0.25, (now - last) / 1000);
+  last = now;
+  if (playing) {
+    el += dt;
+    if (el >= STEPS[idx].dur) {
+      if (idx < STEPS.length - 1) go(idx + 1);
+      else { el = STEPS[idx].dur; finish(); }
+    }
+    updateBar();
+  }
+  musicTick(dt);
+  requestAnimationFrame(tick);
+}
+
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+function updateBar() {
+  const t = stepAt[idx] + el;
+  $('barFill').style.width = (t / TOTAL * 100) + '%';
+  $('time').textContent = `${fmt(t)} / ${fmt(TOTAL)}`;
+}
+
+function start() {
+  closeQuiz();
+  $('start').classList.add('hide');
+  $('end').classList.add('hide');
+  curScene = -1;
+  go(0);
+  setPlaying(true);
+}
+
+function sceneJump(dir) {
+  if (!$('start').classList.contains('hide')) return start();
+  closeQuiz();
+  $('end').classList.add('hide');
+  const s = STEPS[idx].scene;
+  let target;
+  if (dir < 0) target = (idx > sceneStart[s] || el > 1.5) ? sceneStart[s] : sceneStart[Math.max(0, s - 1)];
+  else target = s + 1 < SCENES.length ? sceneStart[s + 1] : STEPS.length - 1;
+  curScene = -1;
+  go(target);
+  musicOn = playing;
+}
+
+/* ---------- 조작 ---------- */
+$('startBtn').onclick = start;
+$('againBtn').onclick = start;
+$('playBtn').onclick = () => {
+  if (!$('start').classList.contains('hide') || !$('end').classList.contains('hide')) return start();
+  if (inQuiz) return;
+  setPlaying(!playing);
+};
+$('muteBtn').onclick = () => { muted = !muted; drawMute(); };
+$('prevBtn').onclick = () => sceneJump(-1);
+$('nextBtn').onclick = () => sceneJump(1);
+$('bar').onclick = e => {
+  if (!$('start').classList.contains('hide')) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  const t = (e.clientX - r.left) / r.width * TOTAL;
+  let i = 0; while (i + 1 < STEPS.length && stepAt[i + 1] <= t) i++;
+  closeQuiz();
+  $('end').classList.add('hide');
+  go(i);
+  musicOn = playing;
+};
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'BUTTON' && (e.key === ' ' || e.key === 'Enter')) return;
+  if (e.key === ' ') { e.preventDefault(); $('playBtn').click(); }
+  if (inQuiz) return;
+  if (e.key === 'ArrowLeft') sceneJump(-1);
+  if (e.key === 'ArrowRight') sceneJump(1);
+});
+let tx = null;
+screen.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+screen.addEventListener('touchend', e => {
+  if (tx === null || inQuiz) return;
+  const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 50) sceneJump(dx < 0 ? 1 : -1);
+});
+
+// 첫 화면 (#step=번호 로 열면 그 장면에서 멈춘 채 시작: 확인용)
+$('totalTxt').textContent = `약 ${Math.floor(TOTAL / 60)}분 ${Math.round(TOTAL % 60 / 10) * 10}초`;
+drawMute();
+const m = location.hash.match(/step=(\d+)/);
+if (m) { $('start').classList.add('hide'); go(+m[1]); setPlaying(false); }
+else { showScene(0); updateBar(); }
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
