@@ -30,6 +30,8 @@ header p{margin:4px 0 0;color:var(--sub);font-size:14px}
 /* 연도 배지 */
 .badge{position:absolute;top:12px;right:12px;font-family:var(--serif);font-weight:900;color:var(--gold);background:rgba(0,0,0,.5);border:1px solid rgba(227,184,102,.5);padding:4px 12px;border-radius:10px;font-size:clamp(13px,1.8vw,18px);opacity:0;transition:opacity .6s}
 .badge.on{opacity:1}
+.blackout{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity 2s ease;z-index:3}
+.blackout.on{opacity:1}
 
 /* 큰 카드들 공통 */
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;opacity:0;pointer-events:none;transition:opacity .7s ease}
@@ -127,6 +129,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
     <div class="fx rain" id="fxRain"></div>
     <div class="fx" id="fxRing"><div class="ring"></div></div>
     <div class="badge" id="badge"></div>
+    <div class="blackout" id="blackout"></div>
 
     <div class="overlay year" id="year"><b id="yearNum"></b><span id="yearSub"></span></div>
     <div class="overlay photo" id="photo">
@@ -225,7 +228,7 @@ const SCENES = [
     '신하들은 그 책임을 엄하게 물었지요',
     '세종이 벌을 조금 줄여 주었지만, 장영실은 결국 벼슬에서 물러나야 했답니다',
   ]},
-  { img: 's04', m: 3, kb: ['scale(1.03) translate(3%,0)', 'scale(1.16) translate(-4%,1%)'], lines: [
+  { img: 's04', m: 3, slow: 1.7, fadeOut: true, kb: ['scale(1.03) translate(3%,0)', 'scale(1.16) translate(-4%,1%)'], lines: [
     '그 뒤 장영실은 어떻게 살았을까요?',
     '어디에도 기록은 남아 있지 않습니다',
   ]},
@@ -234,7 +237,7 @@ const SCENES = [
     '하지만 이것은 역사 기록에는 없는, 상상이 더해진 이야기랍니다',
   ]},
   { img: 's13', m: 4, kb: ['scale(1.02)', 'scale(1.12) translate(0,-2%)'], lines: [
-    '노비로 태어난 한 소년이 조선의 하늘과 시간을 바꾼 것입니다',
+    '조선의 하늘과 시간을 바꾼, 노비로 태어난 한 소년',
     '600년이 지난 지금도 그 이름은 남아 있어요',
     "새로운 기술을 개발한 연구팀에게 주는 상, '장영실상'이 바로 그것이지요",
   ]},
@@ -253,8 +256,9 @@ const sceneStart = [];
 SCENES.forEach((sc, i) => {
   sceneStart[i] = STEPS.length;
   if (sc.year && !sc.noCard) STEPS.push({ t: 'year', scene: i, dur: 2.6 });
-  sc.lines.forEach(text => STEPS.push({ t: 'line', text, scene: i, dur: lineDur(text) }));
+  sc.lines.forEach(text => STEPS.push({ t: 'line', text, scene: i, dur: lineDur(text) * (sc.slow || 1) }));
   if (sc.photo) STEPS.push({ t: 'photo', photo: sc.photo, scene: i, dur: 4 });
+  if (sc.fadeOut) STEPS.push({ t: 'black', scene: i, dur: 2.4 });
 });
 const stepAt = []; let acc = 0;
 STEPS.forEach((s, i) => { stepAt[i] = acc; acc += s.dur; });
@@ -360,6 +364,8 @@ function showStep(i) {
   const st = STEPS[i];
   if (st.scene !== curScene) showScene(st.scene);
   ['year', 'photo'].forEach(id => $(id).classList.remove('on'));
+  $('blackout').classList.toggle('on', st.t === 'black');
+  if (st.t === 'black') setSub('');
   const sc = SCENES[st.scene];
 
   if (st.t === 'line') setSub(st.text);
