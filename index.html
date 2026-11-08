@@ -36,9 +36,8 @@ header p{margin:4px 0 0;color:var(--sub);font-size:14px}
 /* 큰 카드들 공통 */
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;opacity:0;pointer-events:none;transition:opacity .7s ease}
 .overlay.on{opacity:1}
-.year{background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.25) 70%);transition:opacity 1.4s ease}
-.year b,.year span{transition:transform 1.6s cubic-bezier(.25,.6,.3,1),filter 1.6s ease}
-.year:not(.on) b,.year:not(.on) span{transform:scale(1.05);filter:blur(4px)}
+.year{background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.25) 70%);transition:opacity 1.2s ease-in-out}
+
 .year b{font-family:var(--serif);font-weight:900;font-size:clamp(56px,13vw,150px);line-height:1;color:var(--gold);text-shadow:0 4px 30px rgba(0,0,0,.7);letter-spacing:-2px}
 .year span{font-size:clamp(15px,2.2vw,24px);margin-top:6px;text-shadow:0 2px 10px #000}
 
@@ -168,6 +167,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
   <ul>
     <li>자격루: <a href="https://commons.wikimedia.org/wiki/File:BoRuGak_Jagyeongnu.JPG" target="_blank" rel="noopener">Gapo</a>, CC BY-SA 3.0</li>
     <li>앙부일구: <a href="https://commons.wikimedia.org/wiki/File:Seoul-Gyeongbokgung-Sundial-02.jpg" target="_blank" rel="noopener">Bernat</a>, CC BY-SA 2.0</li>
+    <li>측우기: <a href="https://commons.wikimedia.org/wiki/File:%EA%B3%B5%EC%A3%BC_%EC%B6%A9%EC%B2%AD%EA%B0%90%EC%98%81_%EC%B8%A1%EC%9A%B0%EA%B8%B0.jpg" target="_blank" rel="noopener">문화재청(현 국가유산청)</a>, 공공누리 제1유형</li>
   </ul>
 </footer>
 
@@ -176,6 +176,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
 const PHOTOS = {
   jagyeongnu: { src: 'images/jagyeongnu.jpg', title: '자격루 (국보)', desc: '지금 남아 있는 것은 1536년(중종 때) 다시 만든 자격루의 일부예요.' },
   angbuilgu:  { src: 'images/angbuilgu.jpg',  title: '앙부일구', desc: '솥 안에 비친 바늘 그림자로 시각과 절기를 읽었어요.' },
+  chugugi:    { src: 'images/chugugi.jpg',    title: '공주 충청감영 측우기 (국보)', desc: '1837년에 만든 것으로, 지금까지 남아 있는 유일한 조선 측우기예요.' },
 };
 
 const MUSIC = { 1: 'music/m1-start.mp3', 2: 'music/m2-invent.mp3', 3: 'music/m3-sad.mp3', 4: 'music/m4-ending.mp3' };
@@ -220,6 +221,9 @@ const SCENES = [
   { img: 'okru', m: 2, fx: 'sparkle', year: [1438, '세종 20년'], kb: ['scale(1.03)', 'scale(1.16) translate(0,2%)'], lines: [
     '흠경각의 옥루도 장영실의 손에서 완성되었습니다',
     '물의 힘으로 해가 움직이고, 작은 인형들이 시각을 알려 주는 신기한 시계',
+  ]},
+  { img: 's11', m: 2, fx: 'rain', year: [1441, '세종 23년'], photo: 'chugugi', kb: ['scale(1.03)', 'scale(1.18) translate(-3%,3%)'], lines: [
+    '비의 양을 재는 측우기도 세종 시대에 만들어졌지요',
   ]},
   { img: 'blame', m: 3, year: [1442, '세종 24년'], kb: ['scale(1.15) translate(-2%,2%)', 'scale(1.03)'], lines: [
     '그런데 장영실이 감독해 만든 임금의 가마가 그만 부서지고 말았습니다',
