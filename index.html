@@ -165,6 +165,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
   <h3>사진 출처 (위키미디어 공용)</h3>
   <ul>
     <li>혼천의: <a href="https://commons.wikimedia.org/wiki/File:Honcheonui_(a_traditional_armillary_sphere_(replica))_(The_sphere_is_a_leading_astronomical_instrument_from_the_Joseon_Dynasty_used_to_observe_the_movements_of_the_sun,_moon_and_stars)_(55220955426).jpg" target="_blank" rel="noopener">이정우 / 문화체육관광부</a>, CC BY-SA 4.0</li>
+    <li>흠경각: <a href="https://commons.wikimedia.org/wiki/File:%EA%B2%BD%EB%B3%B5%EA%B6%81_%ED%9D%A0%EA%B2%BD%EA%B0%81_(2012).jpg" target="_blank" rel="noopener">문화재청(현 국가유산청)</a>, 공공누리 제1유형</li>
     <li>자격루: <a href="https://commons.wikimedia.org/wiki/File:BoRuGak_Jagyeongnu.JPG" target="_blank" rel="noopener">Gapo</a>, CC BY-SA 3.0</li>
     <li>앙부일구: <a href="https://commons.wikimedia.org/wiki/File:Seoul-Gyeongbokgung-Sundial-02.jpg" target="_blank" rel="noopener">Bernat</a>, CC BY-SA 2.0</li>
     <li>측우기: <a href="https://commons.wikimedia.org/wiki/File:%EA%B3%B5%EC%A3%BC_%EC%B6%A9%EC%B2%AD%EA%B0%90%EC%98%81_%EC%B8%A1%EC%9A%B0%EA%B8%B0.jpg" target="_blank" rel="noopener">문화재청(현 국가유산청)</a>, 공공누리 제1유형</li>
@@ -175,6 +176,7 @@ footer ul{margin:0 0 10px;padding-left:18px}
 /* ---------- 장면 데이터 (대본.md와 같음) ---------- */
 const PHOTOS = {
   honcheonui: { src: 'images/honcheonui.jpg', title: '혼천의 (복원품)', desc: '해와 달, 별의 움직임을 재던 천문 기구를 다시 만든 거예요.' },
+  heumgyeonggak: { src: 'images/heumgyeonggak.jpg', title: '경복궁 흠경각', desc: '옥루를 두었던 건물이에요. 옥루는 남아 있지 않아요.' },
   jagyeongnu: { src: 'images/jagyeongnu.jpg', title: '자격루 (국보)', desc: '지금 남아 있는 것은 1536년(중종 때) 다시 만든 자격루의 일부예요.' },
   angbuilgu:  { src: 'images/angbuilgu.jpg',  title: '앙부일구', desc: '솥 안에 비친 바늘 그림자로 시각과 절기를 읽었어요.' },
   chugugi:    { src: 'images/chugugi.jpg',    title: '공주 충청감영 측우기 (국보)', desc: '1837년에 만든 것으로, 지금까지 남아 있는 유일한 조선 측우기예요.' },
@@ -219,7 +221,7 @@ const SCENES = [
     '같은 해, 길가에는 솥 모양의 해시계 앙부일구가 놓입니다',
     '그림자만 보면 누구나 시간을 알 수 있었으니, 백성들에게 얼마나 반가운 선물이었을까요?',
   ]},
-  { img: 'okru', m: 2, fx: 'sparkle', year: [1438, '세종 20년'], kb: ['scale(1.03)', 'scale(1.16) translate(0,2%)'], lines: [
+  { img: 'okru', m: 2, fx: 'sparkle', year: [1438, '세종 20년'], photo: 'heumgyeonggak', kb: ['scale(1.03)', 'scale(1.16) translate(0,2%)'], lines: [
     '흠경각의 옥루도 장영실의 손에서 완성되었습니다',
     '물의 힘으로 해가 움직이고, 작은 인형들이 시각을 알려 주는 신기한 시계',
   ]},
