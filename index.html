@@ -130,7 +130,6 @@ footer ul{margin:0 0 10px;padding-left:18px}
 
     <div class="overlay year" id="year"><b id="yearNum"></b><span id="yearSub"></span></div>
     <div class="overlay photo" id="photo">
-      <div class="real">실제 유물 사진</div>
       <figure><img id="photoImg" alt=""><figcaption><b id="photoTitle"></b><span id="photoDesc"></span></figcaption></figure>
     </div>
 
@@ -259,8 +258,9 @@ const sceneStart = [];
 SCENES.forEach((sc, i) => {
   sceneStart[i] = STEPS.length;
   if (sc.year && !sc.noCard) STEPS.push({ t: 'year', scene: i, dur: 2.6 });
-  sc.lines.forEach(text => STEPS.push({ t: 'line', text, scene: i, dur: lineDur(text) * (sc.slow || 1) }));
-  if (sc.photo) STEPS.push({ t: 'photo', photo: sc.photo, scene: i, dur: 4 });
+  sc.lines.forEach((text, k) => STEPS.push({ t: 'line', text, scene: i, dur: lineDur(text) * (sc.slow || 1),
+    photo: sc.photo && k === sc.lines.length - 1 ? sc.photo : null })); // 마지막 자막부터 실제 사진을 함께 보여 줌
+  if (sc.photo) STEPS.push({ t: 'photo', photo: sc.photo, scene: i, dur: 3.5 });
   if (sc.fadeOut) STEPS.push({ t: 'black', scene: i, dur: 2.4 });
 });
 const stepAt = []; let acc = 0;
@@ -376,9 +376,9 @@ function showStep(i) {
     $('yearNum').textContent = sc.year[0]; $('yearSub').textContent = sc.year[1];
     const y = $('year'); y.classList.remove('on'); void y.offsetWidth; y.classList.add('on'); setSub('');
   }
-  if (st.t === 'photo') { // 자막은 앞 문장을 그대로 둠
+  if (st.t === 'photo' || st.photo) { // 자막은 앞 문장을 그대로 둠
     const p = PHOTOS[st.photo];
-    $('photoImg').src = p.src; $('photoImg').alt = p.title + ' 실제 사진';
+    $('photoImg').src = p.src; $('photoImg').alt = p.title + ' 사진';
     $('photoTitle').textContent = p.title; $('photoDesc').textContent = p.desc;
     $('photo').classList.add('on');
   }
