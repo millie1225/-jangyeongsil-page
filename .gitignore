@@ -1,0 +1,6 @@
+.env
+.env.*
+*.key
+_tmp/
+Thumbs.db
+desktop.ini
